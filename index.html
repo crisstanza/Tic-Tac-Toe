@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>Tic-Tac-Toe</title>
+		<link rel="icon" href="favicon.ico" />
+		<link rel="stylesheet" type="text/css" media="all" href="css/css.css" />
+		<link rel="stylesheet" type="text/css" media="all" href="css/a.css" />
+		<script src="js/lib/io.github.crisstanza.Autos.js"></script>
+		<script src="js/lib/io.github.crisstanza.Creator.js"></script>
+		<script src="js/lib/io.github.crisstanza.Randoms.js"></script>
+		<script src="js/js.js"></script>
+		<script src="js/Dev.js"></script>
+		<script src="js/Fifo.js"></script>
+		<script src="js/Brandom.js"></script>
+	</head>
+	<body data-autos="id, name, button" data-autos-hash="true">
+		<h1><a href="index.html">Tic-Tac-Toe</a></h1>
+		<hr />
+		<br />
+		<div id="main-options">
+			<div class="options">
+				<div>Player:</div>
+				<label title="x is always the first to play"><input type="radio" name="player" value="x" checked="checked" /> x</label>
+				<label><input type="radio" name="player" value="o" /> o</label>
+			</div>
+			<div class="options">
+				<div>Computer:</div>
+				<label><input type="radio" name="computer" value="Dev" checked="checked" /> <i>Dev</i></label>
+				<label title="plays always in the first free position"><input type="radio" name="computer" value="Fifo" /> Fifo</label>
+				<label title="plays always in a random position"><input type="radio" name="computer" value="Brandom" /> Brandom</label>
+			</div>
+			<div class="options">
+				<div>Size:</div>
+				<label><input type="radio" name="size" value="2" checked="checked" /> 2 x 2</label>
+				<label><input type="radio" name="size" value="3" /> 3 x 3</label>
+				<label><input type="radio" name="size" value="4" /> 4 x 4</label>
+				<label><input type="radio" name="size" value="5" /> 5 x 5</label>
+			</div>
+			<br />
+			<div class="options">
+				<button id="btStart">Start!</button>
+			</div>
+		</div>
+		<br />
+		<div id="main-display"></div>
+		<br />
+		<div id="main-output"></div>
+	</body>
+</html>
