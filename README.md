@@ -1,4 +1,4 @@
-# Dojo-26-Maio-2021
+# Tic-Tac-Toe
 
 https://crisstanza.github.io/Tic-Tac-Toe/
 
