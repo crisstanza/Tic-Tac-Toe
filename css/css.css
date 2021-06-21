@@ -17,13 +17,16 @@ a:hover { text-decoration: underline; }
 table {
 	margin: auto;
 	background-color: beige;
-	padding: 5px;
+	padding: 0;
+}
+table.game-over:hover {
+	cursor: not-allowed;
 }
 td {
-	width: 100px;
-	height: 100px;
+	width: 96px;
+	height: 96px;
 	text-align: center;
-	font-size: 60pt;
+	font-size: 48pt;
 	padding: 0;
 	margin: 0;
 }
@@ -40,6 +43,10 @@ div.options div {
 div.options label {
 	display: inline-block;
 	width: 110px;
+}
+
+td.high-light {
+	background-color: rgba(144, 238, 144, 0.25);
 }
 
 #main-output { text-align: center; }

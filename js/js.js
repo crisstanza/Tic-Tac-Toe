@@ -49,12 +49,10 @@ function btStart_OnClick(event) {
 	document.location.hash = `player=${playerPiece}&computer=${computerName}&size=${boardSize}`;
 
 	GAME_STATE.state = ENUM_GAME_STATE.STARTED;
+	GAME_STATE.currentPlayer = ENUM_PIECES.X;
 
 	if (playerPiece == ENUM_PIECES.O) {
-		GAME_STATE.currentPlayer = ENUM_PIECES.O;
 		computerPlay();
-	} else {
-		GAME_STATE.currentPlayer = ENUM_PIECES.X;
 	}
 }
 
@@ -67,8 +65,7 @@ function td_OnClick(line, column) {
 	let td = tr.cells[column];
 	if (td.innerHTML)
 		return;
-	td.innerHTML = playerPiece;
-	td.classList.add('fade-in');
+	move(td, playerPiece);
 	updateGameState();
 	if (GAME_STATE.state == ENUM_GAME_STATE.GAME_OVER) {
 		GAME_STATE.currentPlayer = null;
@@ -81,7 +78,19 @@ function td_OnClick(line, column) {
 
 function gameOver() {
 	GAME_STATE.state = ENUM_GAME_STATE.GAME_OVER;
+	board.classList.add('game-over');
 	mainOutput.innerHTML = 'Game over!<br /><br />The winner is: ' + getWinnerLabel() + '.';
+	if (GAME_STATE.winner) {
+		let t3Rows = findAllT3Rows(board);
+		for (let i = 0 ; i < t3Rows.length ; i++) {
+			let t3Row = t3Rows[i];
+			let rowReport = getRowReport(t3Row);
+			if (rowReport.countX == boardSize || rowReport.countO == boardSize) {
+				t3Row.forEach(td => td.classList.add('fade-in', 'high-light'));
+				return;
+			}
+		}
+	}
 }
 
 function computerPlay() {
@@ -95,6 +104,11 @@ function computerPlay() {
 	} else {
 		GAME_STATE.currentPlayer = playerPiece;
 	}
+}
+
+function move(td, piece) {
+	td.innerHTML = piece;
+	td.classList.add('fade-in');
 }
 
 (function() {
@@ -133,14 +147,31 @@ function getWinner(report) {
 	return null;
 }
 
-function updateGameState() {
+function findEmptySquareRow(tds) {
+	return tds.find(element => element.innerHTML == '');
+}
+
+function findEmptySquareAllRows(t3Rows) {
+	for (let i = 0 ; i < t3Rows.length ; i++) {
+		let t3Row = t3Rows[i];
+		let emptySquare = t3Row.find(element => element.innerHTML == '');
+		if (emptySquare)
+			return emptySquare;
+	}
+}
+
+function otherPiece(piece) {
+	return piece == ENUM_PIECES.O ? ENUM_PIECES.X : ENUM_PIECES.O;
+}
+
+function updateGameState(whoJustPlayed) {
 	for (let i = 0 ; i < boardSize ; i++) {
 		let tr = board.rows[i];
 		let tds = Array.from(tr.cells);
 		updateGameWinner(tds);
 		if (GAME_STATE.winner) {
 			GAME_STATE.state = ENUM_GAME_STATE.GAME_OVER;
-			return true;
+			return;
 		}
 	}
 	for (let j = 0 ; j < boardSize ; j++) {
@@ -152,7 +183,7 @@ function updateGameState() {
 		updateGameWinner(tds);
 		if (GAME_STATE.winner) {
 			GAME_STATE.state = ENUM_GAME_STATE.GAME_OVER;
-			return true;
+			return;
 		}
 	}
 
@@ -164,7 +195,7 @@ function updateGameState() {
 	updateGameWinner(tds);
 	if (GAME_STATE.winner) {
 		GAME_STATE.state = ENUM_GAME_STATE.GAME_OVER;
-		return true;
+		return;
 	}
 
 	tds = [];
@@ -175,7 +206,7 @@ function updateGameState() {
 	updateGameWinner(tds);
 	if (GAME_STATE.winner) {
 		GAME_STATE.state = ENUM_GAME_STATE.GAME_OVER;
-		return true;
+		return;
 	}
 
 	for (let i = 0 ; i < boardSize ; i++) {
@@ -183,11 +214,56 @@ function updateGameState() {
 		for (let j = 0 ; j < boardSize ; j++) {
 			let td = tr.cells[j];
 			if (!td.innerHTML)
-				return false;
+				return;
 		}
 	}
 
 	GAME_STATE.state = ENUM_GAME_STATE.GAME_OVER;
+}
+
+function findDiagonals(board) {
+	let rows = [];
+	let tdsPrim = [];
+	let tdsSec = [];
+	for (let i = 0 ; i < boardSize ; i++) {
+		let tr = board.rows[i];
+		tdsPrim.push(tr.cells[i]);
+		tdsSec.push(tr.cells[boardSize - 1 - i]);
+	}
+	rows.push(tdsPrim);
+	rows.push(tdsSec);
+	return rows;
+}
+
+function findVerticals(board) {
+	let rows = [];
+	for (let j = 0 ; j < boardSize ; j++) {
+		let tds = [];
+		for (let i = 0 ; i < boardSize ; i++) {
+			let tr = board.rows[i];
+			tds.push(tr.cells[j]);
+		}
+		rows.push(tds);
+	}
+	return rows;
+}
+
+function findHorizonals(board) {
+	let rows = [];
+	for (let i = 0 ; i < boardSize ; i++) {
+		let tr = board.rows[i];
+		let tds = Array.from(tr.cells);
+		rows.push(tds);
+	}
+	return rows;
+}
+
+function findAllT3Rows(board) {
+	let t3Rows = [];
+	t3Rows.push(...findHorizonals(board));
+	t3Rows.push(...findVerticals(board));
+	t3Rows.push(...findDiagonals(board));
+	return t3Rows;
 }
 
 function getWinnerLabel() {
